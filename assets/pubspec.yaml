@@ -1,0 +1,12 @@
+name: ai_fitness_coach_assets
+description: Asset export helpers for the AI Fitness Coach project
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+flutter:
+  assets:
+    - AI_Fit.png
+    - image.png

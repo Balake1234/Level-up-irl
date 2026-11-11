@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Level Up IRL | Fitness Coach for Gamers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div id="onboardingView" class="screen active">
+        <div class="hero-panel">
+          <div class="brand-badge">IRL</div>
+          <p class="eyebrow">Fitness built for gamers</p>
+          <h1>Train IRL. Level up in-game.</h1>
+          <p class="hero-copy-text">Quick, balanced training for more energy, strength, and focus between school, gaming, and everything else.</p>
+          <button id="getStartedBtn" class="primary-btn">Get Started</button>
+        </div>
+      </div>
+
+      <div id="goalView" class="screen">
+        <div class="card-panel">
+          <div class="panel-header">
+            <p class="section-label">Step 1 / 4</p>
+            <h2>Choose your focus</h2>
+            <p>Pick a real-life stat you want to build. Keep it fun, balanced, and at your pace.</p>
+          </div>
+
+          <div class="goal-grid">
+            <button class="goal-card selected" data-goal="Build Muscle">
+              <span class="goal-icon">💪</span>
+              <strong>Build Muscle</strong>
+              <small>Strength-focused and performance driven</small>
+            </button>
+            <button class="goal-card" data-goal="Build Endurance">
+              <span class="goal-icon">🔥</span>
+              <strong>Build Endurance</strong>
+              <small>More stamina for sports, play, and daily life</small>
+            </button>
+            <button class="goal-card" data-goal="Get Stronger">
+              <span class="goal-icon">⚡</span>
+              <strong>Get Stronger</strong>
+              <small>Progressive overload and recovery</small>
+            </button>
+            <button class="goal-card" data-goal="Improve Mobility">
+              <span class="goal-icon">🧘</span>
+              <strong>Improve Mobility</strong>
+              <small>Flow, stability, and movement quality</small>
+            </button>
+          </div>
+
+          <div class="panel-actions">
+            <button id="goalNextBtn" class="primary-btn">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="planView" class="screen">
+        <div class="card-panel">
+          <div class="panel-header">
+            <p class="section-label">Step 2 / 4</p>
+            <h2>Your first week preview</h2>
+            <p>A balanced first-week plan built around training, gaming, and recovery.</p>
+          </div>
+
+          <div class="plan-preview-card">
+            <div class="plan-metric-row">
+              <div>
+                <p class="metric-label">Weekly rhythm</p>
+                <h3>3 short sessions</h3>
+              </div>
+              <div class="pill">Built for balance</div>
+            </div>
+            <div class="plan-list">
+              <div>• Strength practice</div>
+              <div>• Cardio or a fun activity</div>
+              <div>• Mobility and recovery</div>
+            </div>
+            <p class="plan-guidance">Start easy, focus on good form, and ask a coach or trusted adult for help with new movements.</p>
+            <div class="plan-footer">
+              <div><strong>Your pace</strong><br />Training, gaming, school, and rest</div>
+              <button id="planNextBtn" class="primary-btn">Start My Plan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dashboardView" class="screen">
+        <div class="dashboard-shell">
+          <header class="dashboard-header">
+            <div>
+              <p id="greetingLabel" class="section-label">Good afternoon, Bryce</p>
+              <h2 id="coachHeading">Your coach is ready.</h2>
+            </div>
+            <div class="header-actions">
+              <span id="coachVibe" class="coach-vibe">Coach energy: 88%</span>
+              <button id="adjustGoalsBtn" class="ghost-btn">Adjust Goals</button>
+            </div>
+          </header>
+
+          <section class="profile-card dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Profile</p>
+              <button id="profileEditBtn" class="text-btn">Edit</button>
+            </div>
+            <div class="profile-row">
+              <div>
+                <h3 id="profileName">Bryce</h3>
+                <p id="profileHeadline">Beginner player</p>
+              </div>
+              <div class="profile-badges">
+                <span id="profileLevel">Beginner</span>
+                <span id="profileSchedule">3 days / week</span>
+              </div>
+            </div>
+          </section>
+          
+          <section class="metrics-row">
+            <article class="metric-card large">
+              <div class="metric-top">
+                <div>
+                  <p class="metric-label">Today’s workout</p>
+                  <h3 id="workoutTitle">Upper body + core</h3>
+                </div>
+                <div class="ring-wrap">
+                  <div class="ring">
+                    <span id="workoutPercent">72%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-bar"><span></span></div>
+                <strong id="workoutStatus">On track</strong>
+              </div>
+            </article>
+            <article class="metric-card">
+              <p class="metric-label">Recovery score</p>
+              <h3 id="recoveryScore">84%</h3>
+              <p id="recoveryText">Sleep and mobility are trending well.</p>
+            </article>
+            <article class="metric-card">
+              <p class="metric-label">Hydration</p>
+              <h3 id="hydrationValue">2.1L</h3>
+              <p id="hydrationText">Keep it steady through the evening.</p>
+            </article>
+          </section>
+
+          <section class="weekly-progress dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Week progress</p>
+              <button id="weekResetBtn" class="text-btn">Reset</button>
+            </div>
+            <div id="weekProgressGrid" class="week-grid"></div>
+          </section>
+
+          <section class="today-focus dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Today's focus</p>
+              <span id="focusTag" class="focus-tag">Priority</span>
+            </div>
+            <h3 id="focusHeadline">Start with your planned workout</h3>
+            <p id="focusDescription">A focused session is the best first step for your goal today.</p>
+          </section>
+
+          <section class="between-matches dashboard-card" aria-live="polite">
+            <div class="card-head">
+              <p class="section-label">Between matches</p>
+              <span class="focus-tag">Optional reset</span>
+            </div>
+            <h3 id="breakTitle">Refresh for the next round</h3>
+            <p id="breakDescription">Look away from the screen, loosen your shoulders, or stand for a moment.</p>
+            <div class="break-actions">
+              <button id="breakStartBtn" class="ghost-btn" type="button">Start 45-sec reset</button>
+              <span id="breakTimer" class="break-timer" aria-live="polite"></span>
+            </div>
+          </section>
+
+          <section class="quest-board dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Quest board</p>
+              <button id="questRefreshBtn" class="text-btn">Refresh</button>
+            </div>
+            <h3 id="questTitle">Today's quests</h3>
+            <ul id="questList" class="quest-list"></ul>
+          </section>
+
+          <section class="progress-graph dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Progress</p>
+              <button id="progressViewBtn" class="text-btn">View</button>
+            </div>
+            <div id="progressChart" class="progress-chart"></div>
+          </section>
+
+          <section class="weekly-plan dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Weekly plan</p>
+              <button id="weeklyPlanBtn" class="text-btn">View</button>
+            </div>
+            <h3 id="weeklyPlanTitle">This week’s priorities</h3>
+            <div id="weeklyTimeline" class="weekly-timeline"></div>
+            <ul id="weeklyPlanList" class="weekly-plan-list"></ul>
+          </section>
+
+          <section class="meal-tracker dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Game-day fuel</p>
+              <button id="mealLogBtn" class="text-btn">Add food</button>
+            </div>
+            <div class="meal-summary-row">
+              <div>
+                <p class="metric-label">Fuel focus</p>
+                <h3 id="mealTarget">Eat regularly</h3>
+              </div>
+              <div class="macro-box">
+                <span class="macro-label">Build a balanced plate</span>
+                <strong id="proteinTarget">Variety matters</strong>
+              </div>
+            </div>
+            <ul id="mealList" class="meal-list"></ul>
+          </section>
+
+          <section class="streak-tracker dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Consistency</p>
+              <button id="streakResetBtn" class="text-btn">Reset</button>
+            </div>
+            <h3 id="streakCount">0 day streak</h3>
+            <p id="streakSummary">Start a streak with one small win today.</p>
+          </section>
+
+          <section class="daily-checkin dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Daily check-in</p>
+              <button id="resetDailyCheckinBtn" class="text-btn">Reset</button>
+            </div>
+            <div class="checkin-list">
+              <label class="checkin-item">
+                <input id="checkWorkout" type="checkbox" />
+                <span>Completed workout</span>
+              </label>
+              <label class="checkin-item">
+                <input id="checkHydration" type="checkbox" />
+                <span>Drank water regularly</span>
+              </label>
+              <label class="checkin-item">
+                <input id="checkProtein" type="checkbox" />
+                <span>Ate a nourishing meal or snack</span>
+              </label>
+              <label class="checkin-item">
+                <input id="checkRecovery" type="checkbox" />
+                <span>Prioritized recovery</span>
+              </label>
+            </div>
+            <div id="checkinResult" class="checkin-result">0 of 4 habits complete</div>
+          </section>
+
+          <section class="coach-summary dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Coach summary</p>
+              <button id="coachNotesBtn" class="text-btn">View Notes</button>
+            </div>
+            <h3 id="summaryHeadline">Nice rhythm today</h3>
+            <p id="summaryBlurb">Your consistency is carrying your plan in the right direction.</p>
+            <div id="habitChecklist" class="habit-checklist"></div>
+          </section>
+
+          <section class="coach-history dashboard-card">
+            <div class="card-head">
+              <p class="section-label">Coach history</p>
+              <button id="historyRefreshBtn" class="text-btn">Refresh</button>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </section>
+
+          <section class="main-grid">
+            <article class="dashboard-card wide">
+              <div class="card-head">
+                <p class="section-label">Workout plan</p>
+                <button id="viewPlanBtn" class="text-btn">View Plan</button>
+              </div>
+              <h3 id="nextSessionTitle">Next session: lower body strength</h3>
+              <p id="nextSessionText">Tempo work, controlled sets, and a light finish to stay sharp.</p>
+              <ul id="workoutList" class="workout-list"></ul>
+            </article>
+            <article class="dashboard-card">
+              <div class="card-head">
+                <p class="section-label">Recovery</p>
+                <button id="recoveryLogBtn" class="text-btn">Log</button>
+              </div>
+              <h3 id="recoveryTitle">Sleep + mobility</h3>
+              <p id="recoverySummary">Your recovery trend is strong today.</p>
+            </article>
+            <article class="dashboard-card">
+              <div class="card-head">
+                <p class="section-label">Hydration</p>
+                <button id="hydrationAddBtn" class="text-btn">Add</button>
+              </div>
+              <h3 id="hydrationTitle">2.1L logged</h3>
+              <p id="hydrationSummary">One more glass before bed will close the gap.</p>
+            </article>
+            <article class="dashboard-card wide">
+              <div class="card-head">
+                <p class="section-label">Coach room</p>
+                <button id="coachRoomBtn" class="text-btn">Start Day 1</button>
+              </div>
+              <h3 id="coachMessage">Hey Bryce — I’ve built your first week. Let’s crush it.</h3>
+              <p id="coachSupport">Consistency matters more than perfect days. You’re right on track.</p>
+            </article>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="inputModal" class="modal-overlay hidden" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <h3 id="modalTitle">Update value</h3>
+        </div>
+        <label class="modal-field">
+          <span id="modalLabel">Value</span>
+          <input id="modalInput" type="text" />
+        </label>
+        <div class="modal-actions">
+          <button id="modalCancel" class="ghost-btn modal-btn-cancel" type="button">Cancel</button>
+          <button id="modalConfirm" class="primary-btn modal-btn-confirm" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+# Flutter/Dart/Pub
+.dart_tool/
+.packages
+.pub-cache/
+build/
+**/build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.flutter-plugins-dependencies
+.dart_tool/package_config.json
+
+# IntelliJ related
+*.iml
+.idea/
+
+# VS Code related
+.vscode/
+
+# macOS
+.DS_Store
+
+# Android
+/android/**/local.properties
+/android/**/generated_plugin_registrant.dart
+
+# iOS
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Pods/
+/ios/Runner.xcworkspace/
+/ios/.symlinks/
+/ios/Flutter/Flutter.podspec
+
+# Others
+*.log
+*.tmp
