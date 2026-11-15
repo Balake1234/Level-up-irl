@@ -127,7 +127,7 @@ const defaultStreakState = {
 };
 
 const defaultProfile = {
-  name: 'Bryce',
+  name: '',
   level: 'Beginner',
   schedule: '3 days / week'
 };
@@ -156,7 +156,7 @@ const progressTrend = {
 
 const goalPlans = {
   'Build Muscle': {
-    greeting: 'Good afternoon, Bryce',
+    greeting: 'Ready to level up?',
     heading: 'Your strength plan is ready.',
     workout: 'Upper body + core',
     progress: '72%',
@@ -171,7 +171,7 @@ const goalPlans = {
     recoverySummary: 'Your recovery trend is strong today.',
     hydrationTitle: '2.1L logged',
     hydrationSummary: 'One more glass before bed will close the gap.',
-    coachMessage: 'Hey Bryce — I built your strength week. Let’s push the next set.',
+    coachMessage: 'Your strength week is ready. Start with a clean first set.',
     coachSupport: 'Consistency beats intensity. Keep the reps clean and the effort high.',
     exercises: [
       'Barbell squat — 4 sets x 6 reps',
@@ -203,7 +203,7 @@ const goalPlans = {
     ]
   },
   'Build Endurance': {
-    greeting: 'Good afternoon, Bryce',
+    greeting: 'Ready to level up?',
     heading: 'Your endurance plan is ready.',
     workout: 'Cardio + conditioning',
     progress: '81%',
@@ -218,7 +218,7 @@ const goalPlans = {
     recoverySummary: 'You are improving balance between effort and rest.',
     hydrationTitle: '2.4L logged',
     hydrationSummary: 'Your energy is holding steady with solid hydration.',
-    coachMessage: 'Hey Bryce — your stamina plan is ready to roll.',
+    coachMessage: 'Your stamina plan is ready to roll.',
     coachSupport: 'Keep the effort steady, leave room for recovery, and build up at your own pace.',
     exercises: [
       'Bike intervals — 15 min at a comfortable pace',
@@ -250,7 +250,7 @@ const goalPlans = {
     ]
   },
   'Get Stronger': {
-    greeting: 'Good afternoon, Bryce',
+    greeting: 'Ready to level up?',
     heading: 'Your strength progression is locked in.',
     workout: 'Full body power',
     progress: '76%',
@@ -265,7 +265,7 @@ const goalPlans = {
     recoverySummary: 'You are recovering well between sessions.',
     hydrationTitle: '2.2L logged',
     hydrationSummary: 'Good work staying hydrated through training.',
-    coachMessage: 'Hey Bryce — your strength is trending up and your volume is solid.',
+    coachMessage: 'Your strength plan is ready. Keep the reps controlled and clean.',
     coachSupport: 'Stay patient with the process and keep the quality high.',
     exercises: [
       'Deadlift — 5 sets x 5 reps',
@@ -297,7 +297,7 @@ const goalPlans = {
     ]
   },
   'Improve Mobility': {
-    greeting: 'Good afternoon, Bryce',
+    greeting: 'Ready to level up?',
     heading: 'Your mobility reset is ready.',
     workout: 'Mobility + recovery',
     progress: '88%',
@@ -312,7 +312,7 @@ const goalPlans = {
     recoverySummary: 'Your movement quality is improving with each session.',
     hydrationTitle: '2.0L logged',
     hydrationSummary: 'You are staying fluid and well recovered.',
-    coachMessage: 'Hey Bryce — mobility work is helping your body move better each day.',
+    coachMessage: 'Your mobility reset is ready. Move smoothly and take your time.',
     coachSupport: 'Small, consistent improvements are building better movement habits.',
     exercises: [
       'World’s greatest stretch — 2 rounds',
@@ -468,14 +468,15 @@ function saveProfile(profile) {
 
 function renderProfile() {
   const profile = loadProfile();
+  const name = profile.name.trim();
 
-  if (profileName) profileName.textContent = profile.name;
+  if (profileName) profileName.textContent = name || 'Enter name';
   if (profileHeadline) profileHeadline.textContent = `${profile.level} player`;
   if (profileLevel) profileLevel.textContent = profile.level;
   if (profileSchedule) profileSchedule.textContent = profile.schedule;
 
   if (greetingLabel) {
-    greetingLabel.textContent = `Good afternoon, ${profile.name}`;
+    greetingLabel.textContent = name ? `Good afternoon, ${name}` : 'Ready to level up?';
   }
 }
 
@@ -769,6 +770,7 @@ function applyPlan(goal) {
   renderChecklist(goal);
   renderDailyCheckin();
   renderQuestBoard(goal);
+  renderProfile();
   renderWeekProgress(goal);
   renderProgressChart(goal);
   renderWeeklyPlan(goal);
@@ -1039,7 +1041,12 @@ if (hydrationAddBtn) {
 if (coachRoomBtn) {
   coachRoomBtn.addEventListener('click', () => {
     const plan = goalPlans[selectedGoal] || goalPlans['Build Muscle'];
-    if (coachMessage) coachMessage.textContent = `Hey ${loadProfile().name} — today’s focus is ${plan.workout.toLowerCase()}.`;
+    const name = loadProfile().name.trim();
+    if (coachMessage) {
+      coachMessage.textContent = name
+        ? `Hey ${name} — today’s focus is ${plan.workout.toLowerCase()}.`
+        : `Today’s focus is ${plan.workout.toLowerCase()}.`;
+    }
     if (coachSupport) coachSupport.textContent = 'Start with the essentials, then build momentum from there.';
   });
 }
