@@ -899,7 +899,7 @@ if (profileEditBtn) {
               defaultValue: current.schedule,
               onSave: (schedule) => {
                 const nextProfile = {
-                  name: name && name.trim() ? name.trim() : current.name,
+                  name: name.trim(),
                   level: level && level.trim() ? level.trim() : current.level,
                   schedule: schedule && schedule.trim() ? schedule.trim() : current.schedule
                 };
