@@ -50,9 +50,13 @@ const profileHeadline = document.getElementById('profileHeadline');
 const profileLevel = document.getElementById('profileLevel');
 const profileSchedule = document.getElementById('profileSchedule');
 const progressChart = document.getElementById('progressChart');
+const progressDetails = document.getElementById('progressDetails');
 const weeklyPlanList = document.getElementById('weeklyPlanList');
 const weeklyPlanTitle = document.getElementById('weeklyPlanTitle');
 const weeklyTimeline = document.getElementById('weeklyTimeline');
+const weeklyPlanBtn = document.getElementById('weeklyPlanBtn');
+const weeklyPlanDetails = document.getElementById('weeklyPlanDetails');
+const workoutPlanDetails = document.getElementById('workoutPlanDetails');
 const progressViewBtn = document.getElementById('progressViewBtn');
 const focusTag = document.getElementById('focusTag');
 const focusHeadline = document.getElementById('focusHeadline');
@@ -915,12 +919,30 @@ if (profileEditBtn) {
   });
 }
 
-if (progressViewBtn) {
+function toggleDetails(button, details, openLabel, closeLabel) {
+  if (!button || !details) return;
+
+  const isExpanded = button.getAttribute('aria-expanded') === 'true';
+  details.hidden = isExpanded;
+  button.setAttribute('aria-expanded', String(!isExpanded));
+  button.textContent = isExpanded ? openLabel : closeLabel;
+}
+
+if (progressViewBtn && progressDetails) {
   progressViewBtn.addEventListener('click', () => {
-    if (summaryHeadline && summaryBlurb) {
-      summaryHeadline.textContent = 'Progress is trending upward';
-      summaryBlurb.textContent = 'Your consistency is building momentum week over week. Keep stacking the wins.';
-    }
+    toggleDetails(progressViewBtn, progressDetails, 'View', 'Hide');
+  });
+}
+
+if (weeklyPlanBtn && weeklyPlanDetails) {
+  weeklyPlanBtn.addEventListener('click', () => {
+    toggleDetails(weeklyPlanBtn, weeklyPlanDetails, 'View', 'Hide');
+  });
+}
+
+if (viewPlanBtn && workoutPlanDetails) {
+  viewPlanBtn.addEventListener('click', () => {
+    toggleDetails(viewPlanBtn, workoutPlanDetails, 'View Plan', 'Hide Plan');
   });
 }
 
@@ -980,17 +1002,6 @@ if (coachNotesBtn) {
       summaryHeadline.textContent = 'Coach notes';
       summaryBlurb.textContent = `${plan.coachSupport} Keep the quality high and stay consistent.`;
     }
-  });
-}
-
-if (viewPlanBtn) {
-  viewPlanBtn.addEventListener('click', () => {
-    const plan = goalPlans[selectedGoal] || goalPlans['Build Muscle'];
-    if (nextSessionTitle && nextSessionText) {
-      nextSessionTitle.textContent = plan.nextSession;
-      nextSessionText.textContent = plan.nextSessionText;
-    }
-    showScreen(currentIndex);
   });
 }
 

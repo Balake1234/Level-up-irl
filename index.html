@@ -190,19 +190,23 @@
           <section class="progress-graph dashboard-card">
             <div class="card-head">
               <p class="section-label">Progress</p>
-              <button id="progressViewBtn" class="text-btn">View</button>
+              <button id="progressViewBtn" class="text-btn" type="button" aria-expanded="false" aria-controls="progressDetails">View</button>
             </div>
-            <div id="progressChart" class="progress-chart"></div>
+            <div id="progressDetails" hidden>
+              <div id="progressChart" class="progress-chart"></div>
+            </div>
           </section>
 
           <section class="weekly-plan dashboard-card">
             <div class="card-head">
               <p class="section-label">Weekly plan</p>
-              <button id="weeklyPlanBtn" class="text-btn">View</button>
+              <button id="weeklyPlanBtn" class="text-btn" type="button" aria-expanded="false" aria-controls="weeklyPlanDetails">View</button>
             </div>
             <h3 id="weeklyPlanTitle">This week’s priorities</h3>
-            <div id="weeklyTimeline" class="weekly-timeline"></div>
-            <ul id="weeklyPlanList" class="weekly-plan-list"></ul>
+            <div id="weeklyPlanDetails" hidden>
+              <div id="weeklyTimeline" class="weekly-timeline"></div>
+              <ul id="weeklyPlanList" class="weekly-plan-list"></ul>
+            </div>
           </section>
 
           <section class="meal-tracker dashboard-card">
@@ -280,11 +284,13 @@
             <article class="dashboard-card wide">
               <div class="card-head">
                 <p class="section-label">Workout plan</p>
-                <button id="viewPlanBtn" class="text-btn">View Plan</button>
+                <button id="viewPlanBtn" class="text-btn" type="button" aria-expanded="false" aria-controls="workoutPlanDetails">View Plan</button>
               </div>
-              <h3 id="nextSessionTitle">Next session: lower body strength</h3>
-              <p id="nextSessionText">Tempo work, controlled sets, and a light finish to stay sharp.</p>
-              <ul id="workoutList" class="workout-list"></ul>
+              <div id="workoutPlanDetails" hidden>
+                <h3 id="nextSessionTitle">Next session: lower body strength</h3>
+                <p id="nextSessionText">Tempo work, controlled sets, and a light finish to stay sharp.</p>
+                <ul id="workoutList" class="workout-list"></ul>
+              </div>
             </article>
             <article class="dashboard-card">
               <div class="card-head">
