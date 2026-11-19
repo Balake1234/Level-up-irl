@@ -8,6 +8,7 @@ const greetingLabel = document.getElementById('greetingLabel');
 const coachHeading = document.getElementById('coachHeading');
 const coachVibe = document.getElementById('coachVibe');
 const workoutTitle = document.getElementById('workoutTitle');
+const workoutRing = document.getElementById('workoutRing');
 const workoutPercent = document.getElementById('workoutPercent');
 const workoutStatus = document.getElementById('workoutStatus');
 const recoveryScore = document.getElementById('recoveryScore');
@@ -99,8 +100,8 @@ const defaultCheckinState = {
 };
 
 const defaultAppState = {
-  hydration: '2.1L',
-  recovery: '84%',
+  hydration: '0.0L',
+  recovery: '',
   mealsByGoal: {}
 };
 
@@ -394,11 +395,29 @@ function getMealsForGoal(goal) {
 function renderWeekProgress(goal) {
   if (!weekProgressGrid) return;
 
-  const progress = weeklyProgress[goal] || weeklyProgress['Build Muscle'];
+  const streakState = loadStreak();
+  const today = new Date();
+  const mondayOffset = (today.getDay() + 6) % 7;
+  const monday = new Date(today);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(monday.getDate() - mondayOffset);
+  const todayKey = getLocalDateKey(today);
+  const checkin = loadCheckinState();
+  const completedToday = Object.values(checkin).filter(Boolean).length;
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   weekProgressGrid.innerHTML = days.map((day, index) => {
-    const state = progress[index] || 'upcoming';
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const dateKey = getLocalDateKey(date);
+    let state = 'upcoming';
+
+    if (dateKey === todayKey) {
+      state = completedToday > 0 ? 'done' : 'active';
+    } else if (streakState.completedDates.includes(dateKey)) {
+      state = 'done';
+    }
+
     return `
       <div class="day-pill ${state}">
         <span>${day}</span>
@@ -469,15 +488,35 @@ function renderWeeklyPlan(goal) {
 function renderProgressChart(goal) {
   if (!progressChart) return;
 
-  const values = progressTrend[goal] || progressTrend['Build Muscle'];
-  const labels = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'];
+  const streakState = loadStreak();
+  const checkin = loadCheckinState();
+  const today = new Date();
+  const todayKey = getLocalDateKey(today);
+  const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const mondayOffset = (today.getDay() + 6) % 7;
+  const monday = new Date(today);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(monday.getDate() - mondayOffset);
 
-  progressChart.innerHTML = values.map((value, index) => `
-    <div class="chart-column">
-      <span class="chart-bar" style="height: ${value}%"></span>
-      <small>${labels[index]}</small>
-    </div>
-  `).join('');
+  progressChart.innerHTML = labels.map((label, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const dateKey = getLocalDateKey(date);
+    let value = 0;
+
+    if (dateKey === todayKey) {
+      value = Math.round(Object.values(checkin).filter(Boolean).length / 4 * 100);
+    } else if (streakState.completedDates.includes(dateKey)) {
+      value = 100;
+    }
+
+    return `
+      <div class="chart-column">
+        <span class="chart-bar" style="height: ${value}%"></span>
+        <small>${label}</small>
+      </div>
+    `;
+  }).join('');
 }
 
 function loadProfile() {
@@ -575,11 +614,14 @@ function renderQuestBoard(goal) {
 function renderHistory() {
   if (!historyList) return;
 
+  const appState = loadAppState();
+  const checkin = loadCheckinState();
+  const streak = loadStreak();
   const entries = [
-    { label: 'Recovery check', detail: 'Sleep quality remained stable and your evening routine stayed consistent.' },
-    { label: 'Fuel check', detail: 'Regular meals and water can help keep your energy steady.' },
-    { label: 'Workout outlook', detail: 'Your next session should feel stronger as your streak builds.' },
-    { label: 'Coach note', detail: 'Stay patient. Consistency compounds faster than perfection.' }
+    { label: 'Recovery check', detail: appState.recovery ? `Recovery score logged at ${appState.recovery}.` : 'No recovery score has been logged today.' },
+    { label: 'Hydration check', detail: appState.hydration && appState.hydration !== '0.0L' ? `Hydration logged at ${appState.hydration}.` : 'No hydration value has been logged today.' },
+    { label: 'Workout check', detail: checkin.workout ? 'Workout is complete for today.' : 'No workout completion is logged today.' },
+    { label: 'Consistency', detail: `${streak.completedDates.length} actual active day${streak.completedDates.length === 1 ? '' : 's'} recorded in this browser.` }
   ];
 
   historyList.innerHTML = entries.map((entry) => `
@@ -691,9 +733,8 @@ function updateCheckinSummary() {
       summaryHeadline.textContent = 'Momentum is building';
       summaryBlurb.textContent = 'One good habit today is enough to keep the streak alive.';
     } else {
-      const plan = goalPlans[selectedGoal] || goalPlans['Build Muscle'];
-      summaryHeadline.textContent = plan.summaryHeadline;
-      summaryBlurb.textContent = plan.summaryBlurb;
+      summaryHeadline.textContent = 'Start with one small win';
+      summaryBlurb.textContent = 'No habits are complete today. Check off one to start tracking.';
     }
   }
 }
@@ -714,6 +755,12 @@ function handleCheckinToggle(key, checked) {
   state[key] = checked;
   saveCheckinState(state);
   updateCheckinSummary();
+  renderWorkoutMetric();
+  renderHistory();
+  renderCoachVibe();
+  renderWeekProgress(selectedGoal);
+  renderProgressChart(selectedGoal);
+  renderQuestBoard(selectedGoal);
   renderTodayFocus();
 }
 
@@ -722,10 +769,10 @@ function renderCoachVibe() {
 
   const state = loadCheckinState();
   const completed = Object.values(state).filter(Boolean).length;
-  const energyValue = 72 + completed * 6;
+  const dailyProgress = Math.round(completed / 4 * 100);
   const mood = completed >= 3 ? 'High focus' : completed >= 1 ? 'Steady pace' : 'Reset mode';
 
-  coachVibe.textContent = `Coach energy: ${Math.min(99, energyValue)}% • ${mood}`;
+  coachVibe.textContent = `Today: ${dailyProgress}% • ${mood}`;
 }
 
 function renderTodayFocus() {
@@ -763,27 +810,35 @@ function renderTodayFocus() {
   if (focusTag) focusTag.textContent = tag;
 }
 
+function renderWorkoutMetric() {
+  const state = loadCheckinState();
+  const percent = state.workout ? 100 : 0;
+
+  if (workoutPercent) workoutPercent.textContent = `${percent}%`;
+  if (workoutStatus) workoutStatus.textContent = state.workout ? 'Completed' : 'Not started';
+  if (workoutRing) workoutRing.style.background = `conic-gradient(var(--accent) 0 ${percent}%, rgba(255,255,255,0.1) ${percent}% 100%)`;
+}
+
 function applyPlan(goal) {
   const plan = goalPlans[goal] || goalPlans['Build Muscle'];
   const appState = loadAppState();
-  const savedHydration = appState.hydration || plan.hydration;
-  const savedRecovery = appState.recovery || plan.recovery;
+  const savedHydration = appState.hydration || '0.0L';
+  const savedRecovery = appState.recovery || '';
 
   if (greetingLabel) greetingLabel.textContent = plan.greeting;
   if (coachHeading) coachHeading.textContent = plan.heading;
   if (workoutTitle) workoutTitle.textContent = plan.workout;
-  if (workoutPercent) workoutPercent.textContent = plan.progress;
-  if (workoutStatus) workoutStatus.textContent = plan.status;
-  if (recoveryScore) recoveryScore.textContent = savedRecovery;
-  if (recoveryText) recoveryText.textContent = plan.recoveryText;
+  renderWorkoutMetric();
+  if (recoveryScore) recoveryScore.textContent = savedRecovery || 'Not logged';
+  if (recoveryText) recoveryText.textContent = savedRecovery ? 'Recovery score logged for today.' : 'Add a score to track today’s recovery.';
   if (hydrationValue) hydrationValue.textContent = savedHydration;
-  if (hydrationText) hydrationText.textContent = plan.hydrationText;
+  if (hydrationText) hydrationText.textContent = savedHydration === '0.0L' ? 'Add a value after you drink water.' : 'Hydration logged for today.';
   if (nextSessionTitle) nextSessionTitle.textContent = plan.nextSession;
   if (nextSessionText) nextSessionText.textContent = plan.nextSessionText;
-  if (recoveryTitle) recoveryTitle.textContent = plan.recoveryTitle;
-  if (recoverySummary) recoverySummary.textContent = plan.recoverySummary;
-  if (hydrationTitle) hydrationTitle.textContent = `${savedHydration} logged`;
-  if (hydrationSummary) hydrationSummary.textContent = plan.hydrationSummary;
+  if (recoveryTitle) recoveryTitle.textContent = savedRecovery ? 'Recovery score logged' : 'Recovery not logged';
+  if (recoverySummary) recoverySummary.textContent = savedRecovery ? 'Recovery score logged for today.' : 'Add a score to track today’s recovery.';
+  if (hydrationTitle) hydrationTitle.textContent = savedHydration === '0.0L' ? 'No hydration logged' : `${savedHydration} logged`;
+  if (hydrationSummary) hydrationSummary.textContent = savedHydration === '0.0L' ? 'Add a value after you drink water.' : 'Hydration logged for today.';
   if (coachMessage) coachMessage.textContent = plan.coachMessage;
   if (coachSupport) coachSupport.textContent = plan.coachSupport;
 
@@ -1045,7 +1100,10 @@ if (recoveryLogBtn) {
           appState.recovery = result;
           saveAppState(appState);
           if (recoveryScore) recoveryScore.textContent = result;
-          if (recoveryText) recoveryText.textContent = 'Recovery log updated. Keep the routine steady.';
+          if (recoveryText) recoveryText.textContent = 'Recovery score logged for today.';
+          if (recoveryTitle) recoveryTitle.textContent = 'Recovery score logged';
+          if (recoverySummary) recoverySummary.textContent = 'Recovery score logged for today.';
+          renderHistory();
         }
       }
     });
@@ -1067,7 +1125,9 @@ if (hydrationAddBtn) {
           saveAppState(appState);
           if (hydrationValue) hydrationValue.textContent = result;
           if (hydrationTitle) hydrationTitle.textContent = `${result} logged`;
-          if (hydrationText) hydrationText.textContent = 'Hydration updated. Nice work staying on top of it.';
+          if (hydrationText) hydrationText.textContent = 'Hydration logged for today.';
+          if (hydrationSummary) hydrationSummary.textContent = 'Hydration logged for today.';
+          renderHistory();
         }
       }
     });
