@@ -81,6 +81,7 @@ const modalCancel = document.getElementById('modalCancel');
 const modalConfirm = document.getElementById('modalConfirm');
 
 let currentIndex = 0;
+const SCREEN_INDEX_KEY = 'fitnessCoachCurrentScreen';
 let selectedGoal = localStorage.getItem('fitnessGoal') || 'Build Muscle';
 if (selectedGoal === 'Lose Fat') {
   selectedGoal = 'Build Endurance';
@@ -135,6 +136,28 @@ const defaultProfile = {
   level: 'Beginner',
   schedule: '3 days / week'
 };
+
+const savedScreenIndex = localStorage.getItem(SCREEN_INDEX_KEY);
+if (savedScreenIndex !== null) {
+  const parsedScreenIndex = Number(savedScreenIndex);
+  currentIndex = Number.isInteger(parsedScreenIndex) && parsedScreenIndex >= 0 && parsedScreenIndex < screens.length
+    ? parsedScreenIndex
+    : 0;
+} else {
+  try {
+    const savedProfile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+    const savedCheckin = JSON.parse(localStorage.getItem(DAILY_CHECKIN_KEY) || '{}');
+    const hasSavedName = typeof savedProfile.name === 'string' && savedProfile.name.trim().length > 0;
+    const hasCompletedToday = savedCheckin.date === getLocalDateKey(new Date())
+      && Object.values(savedCheckin.habits || {}).some(Boolean);
+
+    if (hasSavedName || hasCompletedToday) {
+      currentIndex = screens.length - 1;
+    }
+  } catch {
+    currentIndex = 0;
+  }
+}
 
 const betweenMatchSteps = [
   'Look away from the screen and focus on something across the room.',
@@ -785,9 +808,11 @@ function applyPlan(goal) {
 }
 
 function showScreen(index) {
+  currentIndex = Math.max(0, Math.min(Math.trunc(index), screens.length - 1));
   screens.forEach((screen, screenIndex) => {
-    screen.classList.toggle('active', screenIndex === index);
+    screen.classList.toggle('active', screenIndex === currentIndex);
   });
+  localStorage.setItem(SCREEN_INDEX_KEY, String(currentIndex));
 }
 
 function advanceFlow() {
@@ -1084,4 +1109,4 @@ if (savedGoal) {
 }
 
 applyPlan(selectedGoal);
-showScreen(0);
+showScreen(currentIndex);
