@@ -532,6 +532,12 @@ function saveProfile(profile) {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 }
 
+function getTimeGreeting(name) {
+  const hour = new Date().getHours();
+  const timeLabel = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  return name ? `${timeLabel}, ${name}` : 'Ready to level up?';
+}
+
 function renderProfile() {
   const profile = loadProfile();
   const name = profile.name.trim();
@@ -542,7 +548,7 @@ function renderProfile() {
   if (profileSchedule) profileSchedule.textContent = profile.schedule;
 
   if (greetingLabel) {
-    greetingLabel.textContent = name ? `Good afternoon, ${name}` : 'Ready to level up?';
+    greetingLabel.textContent = getTimeGreeting(name);
   }
 }
 
@@ -825,7 +831,7 @@ function applyPlan(goal) {
   const savedHydration = appState.hydration || '0.0L';
   const savedRecovery = appState.recovery || '';
 
-  if (greetingLabel) greetingLabel.textContent = plan.greeting;
+  if (greetingLabel) greetingLabel.textContent = getTimeGreeting(loadProfile().name.trim());
   if (coachHeading) coachHeading.textContent = plan.heading;
   if (workoutTitle) workoutTitle.textContent = plan.workout;
   renderWorkoutMetric();
